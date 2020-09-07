@@ -1,0 +1,113 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Player</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      integrity="sha512-PgQMlq+nqFLV4ylk1gwUOgm6CtIIXkKwaIHp/PAIWHzig/lKZSEGKEysh0TCVbHJXCLN7WetD8TFecIky75ZfQ=="
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="CSS/style.css" />
+  </head>
+  <body>
+    <div class="main_div">
+      <div class="music_container">
+        <h2 id="title">bgm of 96</h2>
+        <h3 id="artist">varun</h3>
+        <div class="img_container">
+          <img src="IMAGE/music-1.jpg" alt="" />
+        </div>
+        <audio src="music/music-1.mp3"></audio>
+
+        <!-- controller -->
+        <div class="music_controls">
+          <i class="fas fa-backward" id="prev" title="Previous"></i>
+          <i class="fas fa-play main_button" id="play" title="play"></i>
+          <i class="fas fa-forward" id="next" title="next"></i>
+        </div>
+      </div>
+    </div>
+    <script>
+      const img = document.querySelector("img");
+      const music = document.querySelector("audio");
+      const play = document.getElementById("play");
+      const title = document.getElementById("title");
+      const artist = document.getElementById("artist");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+
+      const songs = [
+        {
+          name: "music-1",
+          title: "bgm of Dia",
+          artist: "Dia",
+        },
+        {
+          name: "music-2",
+          title: "bgm of 96",
+          artist: "96",
+        },
+        {
+          name: "music-3",
+          title: "bgm of ASN",
+          artist: "ASN",
+        },
+      ];
+
+      let isplaying = false;
+
+      play.addEventListener("click", () => {
+        isplaying ? pauseMusic() : playMusic();
+      });
+
+      //play function
+      const playMusic = () => {
+        isplaying = true;
+        music.play();
+        play.classList.replace("fa-play", "fa-pause"); //it convert play symbol to pause symbol
+        img.classList.add("anime");
+      };
+
+      //pause function
+      const pauseMusic = () => {
+        isplaying = false;
+        music.pause();
+        play.classList.replace("fa-pause", "fa-play"); //it convert pause symbol to play symbol
+        img.classList.remove("anime");
+      };
+      //changing the song and its detiles
+
+      const loadSong = (songs) => {
+        title.textContent = songs.title;
+        artist.textContent = songs.artist;
+
+        music.src = "music/" + songs.name + ".mp3";
+        img.src = "IMAGE/" + songs.name + ".jpg";
+      };
+
+      var songNo = 0;
+      //initial music load
+      loadSong(songs[songNo]);
+
+      const nextSong = () => {
+        songNo = (songNo + 1) % songs.length;
+        loadSong(songs[songNo]);
+        playMusic();
+      };
+
+      const prevSong = () => {
+        songNo = (songNo - 1 + songs.length) % songs.length;
+        loadSong(songs[songNo]);
+        playMusic();
+      };
+
+      next.addEventListener("click", nextSong);
+      prev.addEventListener("click", prevSong);
+    </script>
+  </body>
+</html>
