@@ -13,6 +13,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="CSS/style.css" />
+    <script type="text/javascript" src="js/player.js"></script>
   </head>
   <body>
     <div class="main_div">
@@ -23,6 +24,17 @@
           <img src="IMAGE/music-1.jpg" alt="" />
         </div>
         <audio src="music/music-1.mp3"></audio>
+
+        <!-- progress bar -->
+        <div class="progress_bar_container" id="progress_continer">
+          <div class="progress_timmer">
+            <div id="current_time">0:00</div>
+            <div id="total_time">0:00</div>
+          </div>
+          <div class="progress_div" id="progress_div">
+            <div class="progress" id="progress"></div>
+          </div>
+        </div>
 
         <!-- controller -->
         <div class="music_controls">
@@ -40,6 +52,11 @@
       const artist = document.getElementById("artist");
       const prev = document.getElementById("prev");
       const next = document.getElementById("next");
+
+      let progress = document.getElementById("progress");
+      let current_time = document.getElementById("current_time");
+      let total_time = document.getElementById("total_time");
+      let progress_div = document.getElementById("progress_div");
 
       const songs = [
         {
@@ -105,6 +122,51 @@
         loadSong(songs[songNo]);
         playMusic();
       };
+
+      //progress_bar js
+      music.addEventListener("timeupdate", (event) => {
+        const { currentTime, duration } = event.srcElement;
+        //console.log(currentTime);
+        //console.log(duration);
+
+        let progress_time = (currentTime / duration) * 100; //find the what % is covred out of total song length
+        //console.log(progress_time);
+
+        progress.style.width = `${progress_time}%`;
+
+        //total_time update
+        let minute_total = Math.floor(duration / 60);
+        let secound_total = Math.floor(duration % 60);
+
+        let updated_totaltime = `${minute_total}:${secound_total}`;
+        if (duration) {
+          total_time.textContent = `${updated_totaltime}`;
+        }
+
+        //current_time update
+        let minute_current = Math.floor(currentTime / 60);
+        let secound_current = Math.floor(currentTime % 60);
+
+        if (secound_current < 10) {
+          secound_current = `0${secound_current}`;
+        }
+
+        let updated_currenttime = `${minute_current}:${secound_current}`;
+        current_time.textContent = `${updated_currenttime}`;
+      });
+
+      //play anywhere the song by clicking any where on progress bar
+      progress_div.addEventListener("click", (event) => {
+        // console.log(event);
+        const { duration } = music;
+        let moveing_progress =
+          (event.offsetX / event.srcElement.clientWidth) * duration;
+
+        music.currentTime = moveing_progress; //currentTime is bulitin funcation of audio where it set to given time
+      });
+
+      //if whole song got ended then call next song
+      music.addEventListener("ended", nextSong);
 
       next.addEventListener("click", nextSong);
       prev.addEventListener("click", prevSong);
